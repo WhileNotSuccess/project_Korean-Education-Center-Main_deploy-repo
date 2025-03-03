@@ -1,0 +1,6 @@
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/WhileNotSuccess/project_Korean-Education-Center-Frontend_NextJS-deployment-repo.git
+[submodule "backend"]
+	path = backend
+	url = https://github.com/WhileNotSuccess/project_Korean-Education-Center-Backend_NestJS-deployment-repo.git
