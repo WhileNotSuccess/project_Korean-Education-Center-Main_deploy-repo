@@ -45,7 +45,7 @@ services:
     depends_on:
       - db
   web:
-    build: borygashill608/koreanweb:latest
+    image: borygashill608/koreanweb:latest
     ports:
       - "3000:3000"
     tty: true
