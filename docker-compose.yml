@@ -1,0 +1,65 @@
+services:
+  db:
+    image: mysql:8.1.0
+    environment:
+      - MYSQL_ROOT_HOST=${DB_ROOT_HOST}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASS}
+      - MYSQL_ROOT_PASSWORD=${DB_PASS}
+      - TZ=${TZ}
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./db/conf:/etc/mysql/conf.d/:ro
+      - koreandb:/var/lib/mysql
+      - ./db/logs:/var/log/mysql
+    networks:
+      - backend
+  api:
+    image: borygashill608/koreanapi:latest
+    environment:
+      - DB_HOST=db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASS}
+      - DB_DATABASE=${DB_NAME}
+      - TZ=${TZ}
+      - JWT_SECRET=${JWT_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - BACKEND_URL=${BACKEND_URL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_SECRET=${GOOGLE_SECRET}
+      - GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL}
+      - GOOGLE_CALLBACK_LINK_URL=${GOOGLE_CALLBACK_LINK_URL}
+      - COOKIE_DOMAIN=${COOKIE_DOMAIN}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - REFRESH_TOKEN=${REFRESH_TOKEN}
+      - CHOKIDAR_USEPOLLING=true
+    tty: true
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./files:/files
+    networks:
+      - backend
+    depends_on:
+      - db
+  web:
+    build: borygashill608/koreanweb:latest
+    ports:
+      - "3000:3000"
+    tty: true
+    environment:
+      - NEXT_PUBLIC_GOOGLE_MAP_API_KEY=${NEXT_PUBLIC_GOOGLE_MAP_API_KEY}
+      - NEXT_PUBLIC_TINYMCE_API=${NEXT_PUBLIC_TINYMCE_API}
+      - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
+      - NEXT_PUBLIC_COOKIE_DOMAIN=${NEXT_PUBLIC_COOKIE_DOMAIN}
+      - NEXT_PUBLIC_KAKAO_MAP_API_KEY=${NEXT_PUBLIC_KAKAO_MAP_API_KEY}
+    depends_on:
+      - api
+
+networks:
+  backend:
+
+volumes:
+  koreandb:
