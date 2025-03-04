@@ -16,14 +16,42 @@ services:
       - ./db/logs:/var/log/mysql
     networks:
       - backend
+  # api:
+  #   image: borygashill608/koreanapi:latest
+  #   environment:
+  #     - DB_HOST=db
+  #     - DB_USER=${DB_USER}
+  #     - DB_PASSWORD=${DB_PASS}
+  #     - DB_DATABASE=${DB_NAME}
+  #     - TZ=${TZ}
+  #     - JWT_SECRET=${JWT_SECRET}
+  #     - FRONTEND_URL=${FRONTEND_URL}
+  #     - BACKEND_URL=${BACKEND_URL}
+  #     - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+  #     - GOOGLE_SECRET=${GOOGLE_SECRET}
+  #     - GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL}
+  #     - GOOGLE_CALLBACK_LINK_URL=${GOOGLE_CALLBACK_LINK_URL}
+  #     - COOKIE_DOMAIN=${COOKIE_DOMAIN}
+  #     - ADMIN_EMAIL=${ADMIN_EMAIL}
+  #     - REFRESH_TOKEN=${REFRESH_TOKEN}
+  #     - CHOKIDAR_USEPOLLING=true
+  #   tty: true
+  #   ports:
+  #     - "3001:3000"
+  #   volumes:
+  #     - ./files:/files
+  #   networks:
+  #     - backend
+  #   depends_on:
+  #     - db
   api:
-    image: borygashill608/koreanapi:latest
+    image: node:20-buster
+    tty: true
     environment:
-      - DB_HOST=db
+      - DB_HOST=${DB_HOST}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASS}
       - DB_DATABASE=${DB_NAME}
-      - TZ=${TZ}
       - JWT_SECRET=${JWT_SECRET}
       - FRONTEND_URL=${FRONTEND_URL}
       - BACKEND_URL=${BACKEND_URL}
@@ -34,16 +62,15 @@ services:
       - COOKIE_DOMAIN=${COOKIE_DOMAIN}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - REFRESH_TOKEN=${REFRESH_TOKEN}
-      - CHOKIDAR_USEPOLLING=true
-    tty: true
     ports:
       - "3001:3000"
     volumes:
+      - ./backend/api:/app
       - ./files:/files
+    working_dir: /app
+    command: bash -c "npm install && npm run start:dev"
     networks:
       - backend
-    depends_on:
-      - db
   web:
     image: borygashill608/koreanweb:latest
     ports:
